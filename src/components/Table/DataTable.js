@@ -20,13 +20,13 @@ const columns = [
 export default function DataTable(props) {
     let excelData = props.props.excelObj.excelData;
     const rows =  excelData;
-    console.log(excelData);
+
     return (
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 1000, width: "100%" }}>
             <DataGrid
                 rows={rows}
                 columns={columns}
-                pageSize={5}
+                pageSize={20}
                 rowsPerPageOptions={[5]}
                 checkboxSelection
             />

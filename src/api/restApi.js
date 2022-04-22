@@ -17,7 +17,7 @@ export default class RestApi {
 
         this.taskArray = [
             {
-                NAME: 'Задача 1', 
+                NAME: 'Задача 1',
                 ITEMS: [
                     {
                         NAME: 'Задача 1 Подзадача 1',
@@ -48,7 +48,7 @@ export default class RestApi {
                 ]
             },
             {
-                NAME: 'Задача 2', 
+                NAME: 'Задача 2',
                 ITEMS: [
                     {
                         NAME: 'Задача 2 Подзадача 1',
