@@ -31,9 +31,32 @@ export default function UploadFile() {
     };
 
     const parseExcelData = (data) => {
-        return data;
+        let result = [];
+        let count = 0;
+        const parse = (data) => {
+            for(var obj in data) {
+                //console.log(data[obj]);
+                if(Array.isArray(data[obj])) {
+                    parse(data[obj]);
+                } else if(typeof data[obj] === "object") {
+                    count++;
+                    let space = '';
+                    for(var inc = 0; inc < count; inc++) {
+                        space += '.';
+                    }
+                    data[obj].NAME = space + data[obj].NAME;
+                    data[obj].id = count;
+                    parse(data[obj]);
+                } else {
+                    result.push(data);
+                }
+            }
+        }
+        parse(data);
+        return result;
     }
 
+    console.log(excelData);
     excelData = parseExcelData(excelData);
 
     const uploadObj = {
