@@ -1,9 +1,10 @@
 import React from "react";
 import RestApi from "../../../api/restApi";
 import UploadButton from "../../Upload/UploadButton";
+import DataTable from "../../Table/DataTable";
+import ErrorMessage from "../Errors/ErrorMessage";
 import { setExcelData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
-import DataTable from "../../Table/DataTable";
 
 export default function UploadFile() {
     const dispatch = useDispatch();
@@ -80,8 +81,8 @@ export default function UploadFile() {
                         }
                     }
                     parse(data[obj]);
-                    if (data[obj].hasOwnProperty("ITEMS")) {
-                        countLevel = 0;
+                    if (!data[obj].hasOwnProperty("ITEMS")) {
+                        countLevel = 1;
                     }
                 } else {
                     result.push(data);
@@ -90,7 +91,7 @@ export default function UploadFile() {
         };
 
         parse(data);
-        
+
         let arrayExcelData = [];
         result.map((item) => {
             if (arrayExcelData.indexOf(item) === -1) {
@@ -113,10 +114,14 @@ export default function UploadFile() {
         excelData,
     };
 
+    const message = {
+        text: 'Файл не является xlsx'
+    }
     return (
         <div>
             <UploadButton props={{ uploadObj }}></UploadButton>
             <DataTable props={{ excelObj }}></DataTable>
+            <ErrorMessage props={{message}}></ErrorMessage>
         </div>
     );
 }
