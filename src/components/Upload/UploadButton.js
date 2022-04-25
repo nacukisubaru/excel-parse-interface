@@ -8,7 +8,6 @@ const Input = styled('input')({
 });
 
 export default function UploadButton(props) {
-    console.log(props.props.uploadObj.handlerUploadFile);
     return (
         <div>
             <Stack direction="row" alignItems="center" spacing={2}>

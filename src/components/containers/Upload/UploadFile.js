@@ -42,14 +42,14 @@ export default function UploadFile() {
         };
 
         const generateHashCode = (obj) => {
-            var hc = 0;
-            var chars = JSON.stringify(obj).replace(/\{|\"|\}|\:|,/g, "");
-            var len = chars.length;
-            for (var i = 0; i < len; i++) {
-                // Bump 7 to larger prime number to increase uniqueness
-                hc += chars.charCodeAt(i) * 7;
+            var hash = 0;
+            for (var i = 0; i < obj.length; i++) {
+                var code = obj.charCodeAt(i);
+                hash = ((hash<<5)-hash)+code;
+                hash = hash & hash; // Convert to 32bit integer
             }
-            return hc + Math.floor(Math.random() * 1000000000000000000);
+
+            return hash + Math.floor(Math.random() * 1000000000000000000);
         };
 
         const generateNamesWithSpaces = (data) => {
@@ -90,6 +90,7 @@ export default function UploadFile() {
         };
 
         parse(data);
+        
         let arrayExcelData = [];
         result.map((item) => {
             if (arrayExcelData.indexOf(item) === -1) {
