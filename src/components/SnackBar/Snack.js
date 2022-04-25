@@ -15,7 +15,7 @@ export default function CustomizedSnackbars(snackProps) {
             <Snackbar open={snackObj.isOpen} autoHideDuration={6000} onClose={()=>{snackObj.handleClose()}}>
                 <Alert
                     onClose={()=>{snackObj.handleClose()}}
-                    severity="error"
+                    severity={snackObj.statusAlert}
                     sx={{ width: "100%" }}
                 >
                     {snackObj.message}

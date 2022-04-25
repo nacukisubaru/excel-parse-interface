@@ -10,36 +10,49 @@ export default class RestApi {
 
         this.url = "https://jsonplaceholder.typicode.com";
         this.headers = {
-           "Content-Type": "application/json",
+            "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
         };
 
-        this.taskArray = [
+        this.taskArrayMock = [
             {
-                NAME: 'Задача 1',
+                TITLE: 'Задача 1',
                 ITEMS: [
                     {
-                        NAME: 'Задача 1 Подзадача 1',
+                        TITLE: 'Задача 1 Подзадача 1',
                         ITEMS: [
-                            {NAME: 'Задача 1 Подзадача 1 Подзадача 1'},
-                            {NAME: 'Задача 1 Подзадача 1 Подзадача 2'},
+                            {TITLE: 'Задача 1 Подзадача 1 Подзадача 1'},
+                            {TITLE: 'Задача 1 Подзадача 1 Подзадача 2'},
                             {
-                                NAME: 'Задача 1 Подзадача 1 Подзадача 3', 
+                                TITLE: 'Задача 1 Подзадача 1 Подзадача 3', 
                                 ITEMS: [
-                                    {NAME: 'Задача 1 Подзадача 1 Подзадача 3 Подзадача 1'},
+                                    {TITLE: 'Задача 1 Подзадача 1 Подзадача 3 Подзадача 1'},
                                 ]
                             }
                         ]
                     },
                     {
-                        NAME: 'Задача 1 Подзадача 2',
+                        TITLE: 'Задача 1 Подзадача 2',
                         ITEMS: [
-                            {NAME: 'Задача 1 Подзадача 2 Подзадача 1'},
-                            {NAME: 'Задача 1 Подзадача 2 Подзадача 2'},
+                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 1'},
+                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 2'},
                             {
-                                NAME: 'Задача 1 Подзадача 2 Подзадача 3', 
+                                TITLE: 'Задача 1 Подзадача 2 Подзадача 3', 
                                 ITEMS: [
-                                    {NAME: 'Задача 1 Подзадача 2 Подзадача 3 Подзадача 1'},
+                                    {TITLE: 'Задача 1 Подзадача 2 Подзадача 3 Подзадача 1'},
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        TITLE: 'Задача 1 Подзадача 3',
+                        ITEMS: [
+                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 1'},
+                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 2'},
+                            {
+                                TITLE: 'Задача 1 Подзадача 2 Подзадача 3', 
+                                ITEMS: [
+                                    {TITLE: 'Задача 1 Подзадача 2 Подзадача 3 Подзадача 1'},
                                 ]
                             }
                         ]
@@ -47,17 +60,17 @@ export default class RestApi {
                 ]
             },
             {
-                NAME: 'Задача 2',
+                TITLE: 'Задача 2',
                 ITEMS: [
                     {
-                        NAME: 'Задача 2 Подзадача 1',
+                        TITLE: 'Задача 2 Подзадача 1',
                         ITEMS: [
-                            {NAME: 'Задача 2 Подзадача 1 Подзадача 1'},
-                            {NAME: 'Задача 2 Подзадача 1 Подзадача 2'},
+                            {TITLE: 'Задача 2 Подзадача 1 Подзадача 1'},
+                            {TITLE: 'Задача 2 Подзадача 1 Подзадача 2'},
                             {
-                                NAME: 'Задача 2 Подзадача 1 Подзадача 3', 
+                                TITLE: 'Задача 2 Подзадача 1 Подзадача 3', 
                                 ITEMS: [
-                                    {NAME: 'Задача 2 Подзадача 1 Подзадача 3 Подзадача 1'},
+                                    {TITLE: 'Задача 2 Подзадача 1 Подзадача 3 Подзадача 1'},
                                 ]
                             }
                         ]
@@ -65,15 +78,36 @@ export default class RestApi {
                 ]
             }
         ];
+
+        this.projectsListMock = [
+            { id: 15742, name: "My best project" },
+            { id: 15748, name: "My best project2" },
+            { id: 15412, name: "My best project3" },
+        ];
     }
 
-    sendRequest = async (action, data = null) => {
-         let result = {};
-         let that = this;
+    sendRequest = async (method = "post", action, mock = "tasks", data = null) => {
+        let result = {};
+        let that = this;
+        let request = axios;
+        if(method === "post") {
+            request = axios.post;
+        } else if (method === "get") {
+            request = axios.get;
+        }
 
-        await axios.post(this.url + action, {data})
+        await request(this.url + action, { data })
             .then(function (response) {
-                response = that.taskArray;
+                let responseMock = "";
+                if (mock === "tasks") {
+                    responseMock = that.taskArrayMock;
+                } else if (mock === "projects") {
+                    responseMock = that.projectsListMock;
+                } else if (mock === "createTask") {
+                    responseMock = {status: "success"};
+                }
+
+                response = responseMock;
                 result = response;
             })
             .catch(function (error) {
@@ -82,4 +116,18 @@ export default class RestApi {
         return result;
     };
 
+    getBitrixProjectsList = async () => {
+       let response = await this.sendRequest("get", "/users", "projects");
+       return response;
+    };
+
+    sendFile = async (data) => {
+        let response = await this.sendRequest("post", "/users", "tasks", data);
+        return response;
+    };
+
+    createTasks = async (data) => {
+        let response = await this.sendRequest("post", "/users", "createTask", data);
+        return response;
+    }
 }

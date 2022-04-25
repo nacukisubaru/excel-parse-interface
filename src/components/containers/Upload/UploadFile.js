@@ -2,18 +2,17 @@ import React from "react";
 import RestApi from "../../../api/restApi";
 import UploadButton from "../../Upload/UploadButton";
 import DataTable from "../../Table/DataTable";
-import ErrorMessage from "../Errors/ErrorMessage";
 import { setExcelData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
-import { setErrorMessage, showSnack } from "../../../redux/actions/appActions";
+import { setMessage, showSnack } from "../../../redux/actions/appActions";
 
 export default function UploadFile() {
     const dispatch = useDispatch();
     let excelData = useSelector((state) => state.excelManager.excelData);
 
     const sendFile = async (formData) => {
-        let rest = new RestApi("token");
-        let response = await rest.sendRequest("post", "/users", formData);
+        let rest = new RestApi();
+        let response = await rest.sendFile(formData);
         return response;
     };
 
@@ -27,7 +26,7 @@ export default function UploadFile() {
             dispatch(setExcelData(result));
             return true;
         }
-        dispatch(setErrorMessage("Файл не является xlsx"));
+        dispatch(setMessage({name: "Файл не является xlsx", status: "error"}));
         dispatch(showSnack(true));
         return false;
     };
@@ -48,7 +47,7 @@ export default function UploadFile() {
             var hash = 0;
             for (var i = 0; i < obj.length; i++) {
                 var code = obj.charCodeAt(i);
-                hash = ((hash<<5)-hash)+code;
+                hash = (hash << 5) - hash + code;
                 hash = hash & hash; // Convert to 32bit integer
             }
 
@@ -57,13 +56,15 @@ export default function UploadFile() {
 
         const generateNamesWithSpaces = (data) => {
             for (var item in data) {
-                if(data[item].hasOwnProperty("ITEMS")) { 
-                    for(var itemObj in data[item].ITEMS) {
-                        data[item].ITEMS[itemObj].NAME = generateSpaces(countLevel) + data[item].ITEMS[itemObj].NAME;
+                if (data[item].hasOwnProperty("ITEMS")) {
+                    for (var itemObj in data[item].ITEMS) {
+                        data[item].ITEMS[itemObj].TITLE =
+                            generateSpaces(countLevel) +
+                            data[item].ITEMS[itemObj].TITLE;
                     }
                 }
             }
-        }    
+        };
 
         const parse = (data) => {
             for (var obj in data) {
@@ -72,12 +73,22 @@ export default function UploadFile() {
                         countLevel++;
                         for (var item in data[obj].ITEMS) {
                             if (typeof data[obj].ITEMS[item] === "object") {
-                                data[obj].ITEMS[item].NAME = generateSpaces(countLevel) + data[obj].ITEMS[item].NAME;
-                                if (result.indexOf(data[obj].ITEMS[item]) > -1) {
+                                data[obj].ITEMS[item].TITLE =
+                                    generateSpaces(countLevel) +
+                                    data[obj].ITEMS[item].TITLE;
+                                if (
+                                    result.indexOf(data[obj].ITEMS[item]) > -1
+                                ) {
                                     parse(data[obj].ITEMS[item]);
                                 }
-                                if(data[obj].ITEMS[item].hasOwnProperty("ITEMS")) {
-                                    generateNamesWithSpaces(data[obj].ITEMS[item].ITEMS);
+                                if (
+                                    data[obj].ITEMS[item].hasOwnProperty(
+                                        "ITEMS"
+                                    )
+                                ) {
+                                    generateNamesWithSpaces(
+                                        data[obj].ITEMS[item].ITEMS
+                                    );
                                 }
                             }
                         }
@@ -116,14 +127,10 @@ export default function UploadFile() {
         excelData,
     };
 
-    const message = {
-        text: 'Файл не является xlsx'
-    }
     return (
         <div>
             <UploadButton props={{ uploadObj }}></UploadButton>
             <DataTable props={{ excelObj }}></DataTable>
-            <ErrorMessage props={{message}}></ErrorMessage>
         </div>
     );
 }

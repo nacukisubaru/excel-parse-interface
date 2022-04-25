@@ -3,7 +3,7 @@ import Snack from "../../SnackBar/Snack";
 import { showSnack } from "../../../redux/actions/appActions";
 import { useSelector, useDispatch } from "react-redux";
 
-export default function ErrorMessage(props) {
+export default function Message() {
 
     const appManager = useSelector(state => state.appManager);
     const dispatch = useDispatch();
@@ -13,7 +13,8 @@ export default function ErrorMessage(props) {
     }
 
     const snackObj = {
-        message: props.props.message.text,
+        statusAlert: appManager.message.status,
+        message: appManager.message.name,
         isOpen: appManager.showSnack,
         handleClose
     };
