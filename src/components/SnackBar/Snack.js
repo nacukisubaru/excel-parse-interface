@@ -1,6 +1,5 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
@@ -9,33 +8,17 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export default function CustomizedSnackbars(snackProps) {
-    let messageObj = snackProps.props.messageObj;
-    const [open, setOpen] = React.useState(false);
-
-    const handleClick = () => {
-        setOpen(true);
-    };
-
-    const handleClose = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-
-        setOpen(false);
-    };
+    let snackObj = snackProps.props.snackObj;
 
     return (
         <Stack spacing={2} sx={{ width: "100%" }}>
-            <Button variant="outlined" onClick={handleClick}>
-                Open success snackbar
-            </Button>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Snackbar open={snackObj.isOpen} autoHideDuration={6000} onClose={()=>{snackObj.handleClose()}}>
                 <Alert
-                    onClose={handleClose}
+                    onClose={()=>{snackObj.handleClose()}}
                     severity="error"
                     sx={{ width: "100%" }}
                 >
-                    {messageObj.text}
+                    {snackObj.message}
                 </Alert>
             </Snackbar>
         </Stack>

@@ -67,7 +67,7 @@ export default class RestApi {
         ];
     }
 
-    sendRequest = async (method, action, data = null) => {
+    sendRequest = async (action, data = null) => {
          let result = {};
          let that = this;
 

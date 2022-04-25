@@ -5,6 +5,7 @@ import DataTable from "../../Table/DataTable";
 import ErrorMessage from "../Errors/ErrorMessage";
 import { setExcelData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
+import { setErrorMessage, showSnack } from "../../../redux/actions/appActions";
 
 export default function UploadFile() {
     const dispatch = useDispatch();
@@ -26,7 +27,8 @@ export default function UploadFile() {
             dispatch(setExcelData(result));
             return true;
         }
-        console.log("Файл не является xlsx");
+        dispatch(setErrorMessage("Файл не является xlsx"));
+        dispatch(showSnack(true));
         return false;
     };
 

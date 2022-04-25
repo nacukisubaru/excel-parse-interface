@@ -1,14 +1,26 @@
 import React from "react";
 import Snack from "../../SnackBar/Snack";
+import { showSnack } from "../../../redux/actions/appActions";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function ErrorMessage(props) {
-    const messageObj = {
-        text: props.props.message.text
+
+    const appManager = useSelector(state => state.appManager);
+    const dispatch = useDispatch();
+
+    const handleClose = () => {
+        dispatch(showSnack(false));
+    }
+
+    const snackObj = {
+        message: props.props.message.text,
+        isOpen: appManager.showSnack,
+        handleClose
     };
 
     return (
         <div>
-            <Snack props={{messageObj}}></Snack>
+            <Snack props={{snackObj}}></Snack>
         </div>
     );
 }
