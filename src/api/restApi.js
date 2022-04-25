@@ -1,14 +1,13 @@
 const axios = require("axios");
 
 export default class RestApi {
-    constructor(token = "") {
+    constructor() {
         this.statusPostOk = 201;
         this.statusGetOk = 200;
         this.statusInternalError = 500;
         this.statusBadRequest = 400;
         this.statusUnAuthorized = 401;
 
-        //this.token = token;
         this.url = "https://jsonplaceholder.typicode.com";
         this.headers = {
            "Content-Type": "application/json",
@@ -70,23 +69,7 @@ export default class RestApi {
 
     sendRequest = async (method, action, data = null) => {
          let result = {};
-         let that = this; 
-        // ///if (this.token !== "") {
-        //     this.headers = {
-        //         "Content-Type": "application/json",
-        //         "Access-Control-Allow-Origin": "*",
-        //    };
-        // //}
-
-        // const axiosObj = {
-        //     method: method,
-        //     url: this.url + action,
-        //    headers: this.headers,
-        // };
-
-        // if (data != null) {
-        //     axiosObj.data = data;
-        // }
+         let that = this;
 
         await axios.post(this.url + action, {data})
             .then(function (response) {

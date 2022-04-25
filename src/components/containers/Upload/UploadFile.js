@@ -31,6 +31,7 @@ export default function UploadFile() {
 
     const parseExcelData = (data) => {
         let result = [];
+        let countLevel = 0;
 
         const generateSpaces = (level) => {
             let space = "";
@@ -51,21 +52,37 @@ export default function UploadFile() {
             return hc + Math.floor(Math.random() * 1000000000000000000);
         };
 
+        const generateNamesWithSpaces = (data) => {
+            for (var item in data) {
+                if(data[item].hasOwnProperty("ITEMS")) { 
+                    for(var itemObj in data[item].ITEMS) {
+                        data[item].ITEMS[itemObj].NAME = generateSpaces(countLevel) + data[item].ITEMS[itemObj].NAME;
+                    }
+                }
+            }
+        }    
+
         const parse = (data) => {
             for (var obj in data) {
                 if (typeof data[obj] === "object") {
-
                     if (data[obj].hasOwnProperty("ITEMS")) {
+                        countLevel++;
                         for (var item in data[obj].ITEMS) {
                             if (typeof data[obj].ITEMS[item] === "object") {
+                                data[obj].ITEMS[item].NAME = generateSpaces(countLevel) + data[obj].ITEMS[item].NAME;
                                 if (result.indexOf(data[obj].ITEMS[item]) > -1) {
                                     parse(data[obj].ITEMS[item]);
+                                }
+                                if(data[obj].ITEMS[item].hasOwnProperty("ITEMS")) {
+                                    generateNamesWithSpaces(data[obj].ITEMS[item].ITEMS);
                                 }
                             }
                         }
                     }
-
                     parse(data[obj]);
+                    if (data[obj].hasOwnProperty("ITEMS")) {
+                        countLevel = 0;
+                    }
                 } else {
                     result.push(data);
                 }
@@ -79,6 +96,7 @@ export default function UploadFile() {
                 item.id = generateHashCode(item);
                 arrayExcelData.push(item);
             }
+            return true;
         });
 
         return arrayExcelData;
