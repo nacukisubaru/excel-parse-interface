@@ -1,6 +1,5 @@
 import React from "react";
 import RestApi from "../../../api/restApi";
-import UploadButton from "../../Upload/UploadButton";
 import DataTable from "../../Table/DataTable";
 import { setExcelData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
@@ -119,18 +118,16 @@ export default function UploadFile() {
 
     excelData = parseExcelData(excelData);
 
-    const uploadObj = {
-        handlerUploadFile,
-    };
-
     const excelObj = {
         excelData,
+        handlerUploadFile
     };
 
     return (
-        <div>
-            <UploadButton props={{ uploadObj }}></UploadButton>
-            <DataTable props={{ excelObj }}></DataTable>
-        </div>
+        <>
+            <div style={{display:'flex', justifyContent:'center', marginTop: "30px"}}>
+                <DataTable props={{ excelObj }}></DataTable>
+            </div>
+        </>
     );
 }

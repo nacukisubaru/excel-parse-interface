@@ -10,7 +10,7 @@ const Input = styled('input')({
 export default function UploadButton(props) {
     return (
         <div>
-            <Stack direction="row" alignItems="center" spacing={2}>
+            <Stack direction="row" style={{marginBottom:'9px'}} alignItems="center" spacing={2}>
                 <label htmlFor="contained-button-file">
                     <Input
                         accept="image/*"
@@ -18,11 +18,11 @@ export default function UploadButton(props) {
                         multiple
                         type="file"
                         onChange={(event) => {
-                            props.props.uploadObj.handlerUploadFile(event);
+                            props.props.handlerUploadFile(event);
                         }}
                     />
                     <Button variant="contained" component="span">
-                        Upload
+                        Загрузить
                     </Button>
                 </label>
             </Stack>

@@ -16,11 +16,10 @@ export default function CreateTask() {
         });
     }
 
-    const buttonObj = {
-        name: "Создать задачи в Битрикс 24",
-        handleClick
-    };
     return (
-        <CustomButton props={{buttonObj}}></CustomButton>
+        <CustomButton props={{
+            name: "Создать задачи в Битрикс 24",
+            handleClick
+        }}></CustomButton>
     );
 }

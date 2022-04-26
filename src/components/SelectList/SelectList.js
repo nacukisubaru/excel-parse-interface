@@ -11,13 +11,13 @@ export default function SelectList(props) {
     return (
         <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Проекты Битрикс24</InputLabel>
+                <InputLabel id="demo-simple-select-label">{selectObj.labelValue}</InputLabel>
                 {selectObj.items && selectObj.items.length > 0 && (
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         defaultValue={selectObj.selectedValue ? selectObj.selectedValue : ""}
-                        label="Age"
+                        label={selectObj.labelValue}
                         onChange={(event)=>{selectObj.handleChange(event)}}
                     >
                         {

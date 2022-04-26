@@ -32,6 +32,7 @@ export default function BitrixProjectsList() {
     const selectObj = {
         items: bitrixManager.projectList,
         selectedValue: bitrixManager.project,
+        labelValue: 'Проекты Битрикс24',
         handleChange,
     };
 
