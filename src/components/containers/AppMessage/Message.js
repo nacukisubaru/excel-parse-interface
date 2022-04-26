@@ -1,15 +1,15 @@
 import React from "react";
 import Snack from "../../SnackBar/Snack";
-import { showSnack } from "../../../redux/actions/appActions";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useShowMessage } from "../../../hooks/appHooks";
 
 export default function Message() {
 
     const appManager = useSelector(state => state.appManager);
-    const dispatch = useDispatch();
+    const message = useShowMessage();
 
     const handleClose = () => {
-        dispatch(showSnack(false));
+        message.close();
     }
 
     const snackObj = {

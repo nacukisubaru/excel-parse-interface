@@ -1,19 +1,22 @@
 import React from "react";
 import CustomButton from "../../CustomButton/CustomButton";
 import RestApi from "../../../api/restApi";
-import { setMessage } from "../../../redux/actions/appActions";
-import { useDispatch } from "react-redux";
-import { showSnack } from "../../../redux/actions/appActions";
+import { useSelector } from "react-redux";
+import { useShowMessage } from "../../../hooks/appHooks";
 
 export default function CreateTask() {
     const rest = new RestApi();
-    const dispatch = useDispatch();
+    const message = useShowMessage();
+    let excelManager = useSelector((state) => state.excelManager);
 
     const handleClick = () => {
-        rest.createTasks().then(() => {
-           dispatch(setMessage({name: "Задачи успешно созданы!", status: "success"}));
-           dispatch(showSnack(true));
-        });
+        if(excelManager.excelData.length > 0) {
+            rest.createTasks(excelManager.excelData).then(() => {
+                message.show("Задачи успешно созданы!", "success");
+            });
+        } else {
+            message.show("Файл xlsx не был загружен! Загрузите excel файл перед созданием задач", "error");
+        }
     }
 
     return (

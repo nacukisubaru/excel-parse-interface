@@ -1,13 +1,14 @@
 import React from "react";
 import RestApi from "../../../api/restApi";
 import DataTable from "../../Table/DataTable";
-import { setExcelData } from "../../../redux/actions/excelActions";
+import { setExcelData, setParsedData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
-import { setMessage, showSnack } from "../../../redux/actions/appActions";
+import { useShowMessage } from "../../../hooks/appHooks";
 
 export default function UploadFile() {
     const dispatch = useDispatch();
-    let excelData = useSelector((state) => state.excelManager.excelData);
+    const message = useShowMessage();
+    let excelManager = useSelector((state) => state.excelManager);
 
     const sendFile = async (formData) => {
         let rest = new RestApi();
@@ -21,12 +22,16 @@ export default function UploadFile() {
         if (extension === "xlsx") {
             let formData = new FormData();
             formData.append("file", file);
-            let result = await sendFile(formData);
-            dispatch(setExcelData(result));
+            const originalExcelData = await sendFile(formData);
+            const excelDataForParsing = await sendFile(formData);
+    
+            dispatch(setExcelData(originalExcelData));
+            dispatch(setParsedData(parseExcelData(excelDataForParsing)));
+            
             return true;
         }
-        dispatch(setMessage({name: "Файл не является xlsx", status: "error"}));
-        dispatch(showSnack(true));
+        
+        message.show("Файл не является xlsx", "error");
         return false;
     };
 
@@ -116,10 +121,9 @@ export default function UploadFile() {
         return arrayExcelData;
     };
 
-    excelData = parseExcelData(excelData);
 
     const excelObj = {
-        excelData,
+        excelDataArray:excelManager.excelDataParsed,
         handlerUploadFile
     };
 
