@@ -4,10 +4,12 @@ import DataTable from "../../Table/DataTable";
 import { setExcelData, setParsedData } from "../../../redux/actions/excelActions";
 import { useSelector, useDispatch } from "react-redux";
 import { useShowMessage } from "../../../hooks/appHooks";
+import { useTogglePreloader } from "../../../hooks/appHooks";
 
 export default function UploadFile() {
     const dispatch = useDispatch();
     const message = useShowMessage();
+    const preloader = useTogglePreloader();
     let excelManager = useSelector((state) => state.excelManager);
 
     const sendFile = async (formData) => {
@@ -19,6 +21,7 @@ export default function UploadFile() {
     const handlerUploadFile = async (event) => {
         let file = event.target.files[0];
         let extension = file.name.split(".").pop();
+        preloader.toggle(true);
         if (extension === "xlsx") {
             let formData = new FormData();
             formData.append("file", file);
@@ -27,12 +30,10 @@ export default function UploadFile() {
     
             dispatch(setExcelData(originalExcelData));
             dispatch(setParsedData(parseExcelData(excelDataForParsing)));
-            
-            return true;
+        } else {
+            message.show("Файл не является xlsx", "error");
         }
-        
-        message.show("Файл не является xlsx", "error");
-        return false;
+        preloader.toggle(false);
     };
 
     const parseExcelData = (data) => {

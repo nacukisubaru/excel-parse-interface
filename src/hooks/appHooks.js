@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setMessage, showSnack } from "../redux/actions/appActions";
+import { setMessage, showSnack, togglePreloader } from "../redux/actions/appActions";
 
 
 export const useShowMessage = () => {
-    let appManager = useSelector((state) => state.appManager);
+    const appManager = useSelector((state) => state.appManager);
     const dispatch = useDispatch();
 
     const show = (message, status) => {
@@ -21,3 +21,18 @@ export const useShowMessage = () => {
         close
     };
 };
+
+export const useTogglePreloader = () => {
+    const dispatch = useDispatch();
+    const appManager = useSelector((state) => state.appManager);
+
+    const toggle = (isShow) => {
+        dispatch(togglePreloader(isShow));
+    }
+
+    return {
+       isShow: appManager.preloader,
+       toggle
+    }
+
+}
