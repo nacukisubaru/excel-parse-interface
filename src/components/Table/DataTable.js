@@ -6,7 +6,11 @@ import BitrixProjectsList from "../containers/BitrixProjects/BitrixProjectsList"
 
 const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "TITLE", headerName: "First name", width: 900 },
+    { field: "TITLE", headerName: "Название операции", width: 1100 },
+    { field: "STATUS", headerName: "Статус операции", width: 150 },
+    { field: "DURATION_PLAN", headerName: "Длительность - по завершении", width: 250 },
+    { field: "CREATED_DATE", headerName: "Начало", width: 150 },
+    { field: "DEADLINE", headerName: "Окончание", width: 150 },
 ];
 
 
@@ -15,7 +19,7 @@ export default function DataTable(props) {
     const rows = excelData;
 
     return (
-        <div style={{ height: 900, width: "70%", marginBottom: "10px"}}>
+        <div style={{ height: 900, width: "95%", marginBottom: "10px"}}>
              <Grid style={{ marginTop: 1, marginBottom:'6px' }} container spacing={1}>
                 <Grid item={true} style={{width:500, marginRight:5}}>
                     <BitrixProjectsList></BitrixProjectsList>

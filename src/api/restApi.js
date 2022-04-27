@@ -8,76 +8,12 @@ export default class RestApi {
         this.statusBadRequest = 400;
         this.statusUnAuthorized = 401;
 
-        this.url = "https://jsonplaceholder.typicode.com";
+        this.url = "https://project-sync.uniqtripsoft.ru";
         this.headers = {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*",
         };
 
-        this.taskArrayMock = [
-            {
-                TITLE: 'Задача 1',
-                ITEMS: [
-                    {
-                        TITLE: 'Задача 1 Подзадача 1',
-                        ITEMS: [
-                            {TITLE: 'Задача 1 Подзадача 1 Подзадача 1'},
-                            {TITLE: 'Задача 1 Подзадача 1 Подзадача 2'},
-                            {
-                                TITLE: 'Задача 1 Подзадача 1 Подзадача 3', 
-                                ITEMS: [
-                                    {TITLE: 'Задача 1 Подзадача 1 Подзадача 3 Подзадача 1'},
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        TITLE: 'Задача 1 Подзадача 2',
-                        ITEMS: [
-                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 1'},
-                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 2'},
-                            {
-                                TITLE: 'Задача 1 Подзадача 2 Подзадача 3', 
-                                ITEMS: [
-                                    {TITLE: 'Задача 1 Подзадача 2 Подзадача 3 Подзадача 1'},
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        TITLE: 'Задача 1 Подзадача 3',
-                        ITEMS: [
-                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 1'},
-                            {TITLE: 'Задача 1 Подзадача 2 Подзадача 2'},
-                            {
-                                TITLE: 'Задача 1 Подзадача 2 Подзадача 3', 
-                                ITEMS: [
-                                    {TITLE: 'Задача 1 Подзадача 2 Подзадача 3 Подзадача 1'},
-                                ]
-                            }
-                        ]
-                    },
-                ]
-            },
-            {
-                TITLE: 'Задача 2',
-                ITEMS: [
-                    {
-                        TITLE: 'Задача 2 Подзадача 1',
-                        ITEMS: [
-                            {TITLE: 'Задача 2 Подзадача 1 Подзадача 1'},
-                            {TITLE: 'Задача 2 Подзадача 1 Подзадача 2'},
-                            {
-                                TITLE: 'Задача 2 Подзадача 1 Подзадача 3', 
-                                ITEMS: [
-                                    {TITLE: 'Задача 2 Подзадача 1 Подзадача 3 Подзадача 1'},
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
 
         this.projectsListMock = [
             { id: 15742, name: "My best project" },
@@ -89,29 +25,33 @@ export default class RestApi {
     sendRequest = async (method = "post", action, mock = "tasks", data = null) => {
         let result = {};
         let that = this;
-        let request = axios;
-        if(method === "post") {
-            request = axios.post;
-        } else if (method === "get") {
-            request = axios.get;
+
+        const axiosObj = {
+            method: method,
+            url: this.url + action,
+            headers: this.headers,
+        };
+
+        if (data != null) {
+            axiosObj.data = data;
         }
 
-        await request(this.url + action, { data })
+        await axios(axiosObj)
             .then(function (response) {
-                let responseMock = "";
-                if (mock === "tasks") {
-                    responseMock = that.taskArrayMock;
-                } else if (mock === "projects") {
-                    responseMock = that.projectsListMock;
+                if (mock === "projects") {
+                    response = that.projectsListMock;
                 } else if (mock === "createTask") {
-                    responseMock = {status: "success"};
+                    response = {status: "success"};
                 }
-
-                response = responseMock;
                 result = response;
             })
             .catch(function (error) {
                 result = error.response;
+                if (mock === "projects") {
+                    result = that.projectsListMock;
+                } else if (mock === "createTask") {
+                    result = {status: "success"};
+                }
             });
         return result;
     };
@@ -122,8 +62,8 @@ export default class RestApi {
     };
 
     sendFile = async (data) => {
-        let response = await this.sendRequest("post", "/users", "tasks", data);
-        return response;
+        let response = await this.sendRequest("post", "/files/upload/", "tasks", data);
+        return response.data;
     };
 
     createTasks = async (data) => {

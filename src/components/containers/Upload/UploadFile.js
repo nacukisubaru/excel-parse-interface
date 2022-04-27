@@ -24,10 +24,10 @@ export default function UploadFile() {
         preloader.toggle(true);
         if (extension === "xlsx") {
             let formData = new FormData();
-            formData.append("file", file);
+            formData.append("files", file);
             const originalExcelData = await sendFile(formData);
-            const excelDataForParsing = await sendFile(formData);
-    
+            const excelDataForParsing = JSON.parse(JSON.stringify(originalExcelData))
+
             dispatch(setExcelData(originalExcelData));
             dispatch(setParsedData(parseExcelData(excelDataForParsing)));
         } else {
@@ -61,45 +61,41 @@ export default function UploadFile() {
 
         const generateNamesWithSpaces = (data) => {
             for (var item in data) {
-                if (data[item].hasOwnProperty("ITEMS")) {
-                    for (var itemObj in data[item].ITEMS) {
-                        data[item].ITEMS[itemObj].TITLE =
-                            generateSpaces(countLevel) +
-                            data[item].ITEMS[itemObj].TITLE;
-                    }
+                let innerData = data[item];
+                if (innerData.hasOwnProperty("ITEMS") && innerData.ITEMS.length > 0) {
+                    generateNamesWithSpaces(innerData.ITEMS[0]);
+                }
+
+                if (innerData.hasOwnProperty("ITEMS")) {
+                    console.log(innerData);
+                    innerData.TITLE = generateSpaces(countLevel) + innerData.TITLE;
                 }
             }
         };
 
         const parse = (data) => {
             for (var obj in data) {
-                if (typeof data[obj] === "object") {
-                    if (data[obj].hasOwnProperty("ITEMS")) {
+                let innerData = data[obj];
+                if (typeof innerData === "object") {
+                    if (innerData.hasOwnProperty("ITEMS")) {
                         countLevel++;
-                        for (var item in data[obj].ITEMS) {
-                            if (typeof data[obj].ITEMS[item] === "object") {
-                                data[obj].ITEMS[item].TITLE =
-                                    generateSpaces(countLevel) +
-                                    data[obj].ITEMS[item].TITLE;
-                                if (
-                                    result.indexOf(data[obj].ITEMS[item]) > -1
-                                ) {
-                                    parse(data[obj].ITEMS[item]);
-                                }
-                                if (
-                                    data[obj].ITEMS[item].hasOwnProperty(
-                                        "ITEMS"
-                                    )
-                                ) {
-                                    generateNamesWithSpaces(
-                                        data[obj].ITEMS[item].ITEMS
-                                    );
+                        if(innerData.ITEMS.length > 0) {
+                            let itemsData = innerData.ITEMS[0];
+                            for (var item in itemsData) {
+                                if (typeof itemsData[item] === "object") {
+                                    itemsData[item].TITLE = generateSpaces(countLevel) + itemsData[item].TITLE;
+                                    if (itemsData[item].hasOwnProperty("ITEMS") && itemsData[item].ITEMS.length > 0) {
+                                        generateNamesWithSpaces(itemsData[item].ITEMS[0]);
+                                    }
+                                    if (result.indexOf(itemsData[item]) > -1) {
+                                        parse(itemsData[item]);
+                                    }
                                 }
                             }
                         }
                     }
-                    parse(data[obj]);
-                    if (!data[obj].hasOwnProperty("ITEMS")) {
+                    parse(innerData);
+                    if (!innerData.hasOwnProperty("ITEMS")) {
                         countLevel = 1;
                     }
                 } else {
@@ -113,15 +109,16 @@ export default function UploadFile() {
         let arrayExcelData = [];
         result.map((item) => {
             if (arrayExcelData.indexOf(item) === -1) {
-                item.id = generateHashCode(item);
-                arrayExcelData.push(item);
+                if(!Array.isArray(item)) {
+                    item.id = generateHashCode(item);
+                    arrayExcelData.push(item);
+                }
             }
             return true;
         });
 
         return arrayExcelData;
     };
-
 
     const excelObj = {
         excelDataArray:excelManager.excelDataParsed,
