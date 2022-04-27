@@ -15,7 +15,11 @@ export default function UploadFile() {
     const sendFile = async (formData) => {
         let rest = new RestApi();
         let response = await rest.sendFile(formData);
-        return response;
+        if(response.status !== 201) {
+            message.show(response.statusText, "error");
+            return false;
+        }
+        return response.data;
     };
 
     const handlerUploadFile = async (event) => {
@@ -67,7 +71,6 @@ export default function UploadFile() {
                 }
 
                 if (innerData.hasOwnProperty("ITEMS")) {
-                    console.log(innerData);
                     innerData.TITLE = generateSpaces(countLevel) + innerData.TITLE;
                 }
             }

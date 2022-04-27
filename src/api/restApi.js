@@ -47,6 +47,11 @@ export default class RestApi {
             })
             .catch(function (error) {
                 result = error.response;
+
+                if(error.response.status === that.statusInternalError) {
+                    result = {statusText: 'Ошибка при загрузке файла.', status: that.statusInternalError};
+                }
+
                 if (mock === "projects") {
                     result = that.projectsListMock;
                 } else if (mock === "createTask") {
@@ -63,7 +68,10 @@ export default class RestApi {
 
     sendFile = async (data) => {
         let response = await this.sendRequest("post", "/files/upload/", "tasks", data);
-        return response.data;
+        if(response.data === 'Ошибка при загрузке файла.') {
+            return {statusText: 'Ошибка при загрузке файла.', status: this.statusInternalError};
+        }
+        return response;
     };
 
     createTasks = async (data) => {
