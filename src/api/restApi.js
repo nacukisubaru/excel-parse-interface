@@ -18,7 +18,6 @@ export default class RestApi {
     sendRequest = async (
         method = "post",
         action,
-        mock = "tasks",
         data = null,
         isSendFile = false,
     ) => {
@@ -29,7 +28,7 @@ export default class RestApi {
             method: method,
             url: this.url + action,
         };
-        console.log(isSendFile);
+  
         if(isSendFile) {
             axiosObj.headers = {
                 "Content-Type": "multipart/form-data",
@@ -45,18 +44,10 @@ export default class RestApi {
 
         await axios(axiosObj)
             .then(function (response) {
-                if (mock === "createTask") {
-                    response = { status: "success" };
-                }
                 result = response;
             })
             .catch(function (error) {
                 result = error.response;
-                if (mock === "projects") {
-                    result = that.projectsListMock;
-                } else if (mock === "createTask") {
-                    result = { status: "success" };
-                }
             });
         return result;
     };
@@ -65,9 +56,9 @@ export default class RestApi {
         let response = await this.sendRequest(
             "post",
             "/bitrix/group/getGroupList",
-            "",
             { portalId }
         );
+
         if (response.status === this.statusInternalError) {
             return {
                 statusText: "Ошибка сервера при получении групп.",
@@ -81,7 +72,6 @@ export default class RestApi {
         let response = await this.sendRequest(
             "post",
             "/bitrix/portals/getList/",
-            "",
         );
         
         if (response.status === this.statusInternalError) {
@@ -97,7 +87,6 @@ export default class RestApi {
         let response = await this.sendRequest(
             "post",
             "/files/upload/",
-            "tasks",
             data,
             true
         );
@@ -117,10 +106,17 @@ export default class RestApi {
     createTasks = async (portalId, groupId, data) => {
         let response = await this.sendRequest(
             "post",
-            "/users",
-            "createTask",
+            "/bitrix/synchronization/importTasksFromArrFile",
             {portalId, groupId, data}
         );
+
+        if (response.status != this.statusPostOk) {
+            return {
+                statusText: "Ошибка на сервере при создании задач.",
+                status: this.statusInternalError,
+            };
+        }
+
         return response;
     };
 }

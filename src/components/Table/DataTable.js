@@ -6,7 +6,7 @@ const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "TITLE", headerName: "Название операции", width: 1100 },
     { field: "STATUS", headerName: "Статус операции", width: 150 },
-    { field: "DURATION_PLAN", headerName: "Длительность - по завершении", width: 250 },
+    { field: "TIME_ESTIMATE", headerName: "Длительность - по завершении", width: 250 },
     { field: "CREATED_DATE", headerName: "Начало", width: 150 },
     { field: "DEADLINE", headerName: "Окончание", width: 150 },
 ];

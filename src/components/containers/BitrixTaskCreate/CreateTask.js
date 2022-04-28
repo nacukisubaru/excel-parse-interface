@@ -8,6 +8,7 @@ import { useCallback, useEffect } from "react";
 import { useCreateTasks } from "../../../hooks/tasksHooks";
 import { setMessage } from "../../../redux/actions/appActions";
 import { showSnack } from "../../../redux/actions/appActions";
+import { togglePreloader } from "../../../redux/actions/appActions";
 
 export default function CreateTask() {
    
@@ -22,7 +23,8 @@ export default function CreateTask() {
 
     const projectsList = useCallback(() => {
         const rest = new RestApi();
-        rest.getBitrixPortalsList("").then((portals) => {
+        dispatch(togglePreloader(true));
+        rest.getBitrixPortalsList().then((portals) => {
             if (portals.status === 201) {
                 dispatch(setPortalsList(portals.data));
                 return false;
@@ -31,6 +33,7 @@ export default function CreateTask() {
             dispatch(setMessage({name: portals.statusText, status:"error"}));
             dispatch(showSnack(true));
         });
+        dispatch(togglePreloader(false));
     }, [dispatch]);
 
     useEffect(() => {
@@ -46,11 +49,9 @@ export default function CreateTask() {
     const handleChangePortals = (event) => {
         const rest = new RestApi();
         preloader.toggle(true);
-        console.log(event.target.value);
         dispatch(setPortal(event.target.value));
 
         rest.getBitrixGroupsList(event.target.value).then((response) => {
-            console.log(response);
             if (response.status === 201) {
                 dispatch(setGroupList(response.data));
             } else {

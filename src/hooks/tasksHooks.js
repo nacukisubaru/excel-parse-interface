@@ -38,8 +38,12 @@ export const useCreateTasks = () => {
         } else if(hooksManager.bitrixManager.groupId === 0) {
             hooksManager.message.show("Группа не выбрана! Выберете портал и группу перед созданием задач.", "error");
         } else {
-            await hooksManager.rest.createTasks(hooksManager.bitrixManager.portalId, hooksManager.bitrixManager.groupId, hooksManager.excelManager.excelData).then(() => {
-                hooksManager.message.show("Задачи успешно созданы!", "success");
+            await hooksManager.rest.createTasks(hooksManager.bitrixManager.portalId, hooksManager.bitrixManager.groupId, hooksManager.excelManager.excelData).then((response) => {
+                if(response.status === 201 && response.data.result === "success") {
+                    hooksManager.message.show("Задачи успешно созданы!", "success");
+                } else {
+                    hooksManager.message.show(response.statusText, "error");
+                }
             });
         }
 
