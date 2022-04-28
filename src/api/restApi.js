@@ -9,28 +9,35 @@ export default class RestApi {
         this.statusUnAuthorized = 401;
 
         this.url = "https://project-sync.uniqtripsoft.ru";
-        this.headers = {
-            "Content-Type": "multipart/form-data",
+        this.headers =  {
+            "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
         };
-
-
-        this.projectsListMock = [
-            { id: 15742, name: "My best project" },
-            { id: 15748, name: "My best project2" },
-            { id: 15412, name: "My best project3" },
-        ];
     }
 
-    sendRequest = async (method = "post", action, mock = "tasks", data = null) => {
+    sendRequest = async (
+        method = "post",
+        action,
+        mock = "tasks",
+        data = null,
+        isSendFile = false,
+    ) => {
         let result = {};
         let that = this;
 
         const axiosObj = {
             method: method,
             url: this.url + action,
-            headers: this.headers,
         };
+        console.log(isSendFile);
+        if(isSendFile) {
+            axiosObj.headers = {
+                "Content-Type": "multipart/form-data",
+                "Access-Control-Allow-Origin": "*",
+            };
+        } else {
+            axiosObj.headers = this.headers;
+        }
 
         if (data != null) {
             axiosObj.data = data;
@@ -38,44 +45,82 @@ export default class RestApi {
 
         await axios(axiosObj)
             .then(function (response) {
-                if (mock === "projects") {
-                    response = that.projectsListMock;
-                } else if (mock === "createTask") {
-                    response = {status: "success"};
+                if (mock === "createTask") {
+                    response = { status: "success" };
                 }
                 result = response;
             })
             .catch(function (error) {
                 result = error.response;
-
-                if(error.response.status === that.statusInternalError) {
-                    result = {statusText: 'Ошибка при загрузке файла.', status: that.statusInternalError};
-                }
-
                 if (mock === "projects") {
                     result = that.projectsListMock;
                 } else if (mock === "createTask") {
-                    result = {status: "success"};
+                    result = { status: "success" };
                 }
             });
         return result;
     };
 
-    getBitrixProjectsList = async () => {
-       let response = await this.sendRequest("get", "/users", "projects");
-       return response;
+    getBitrixGroupsList = async (portalId) => {
+        let response = await this.sendRequest(
+            "post",
+            "/bitrix/group/getGroupList",
+            "",
+            { portalId }
+        );
+        if (response.status === this.statusInternalError) {
+            return {
+                statusText: "Ошибка сервера при получении групп.",
+                status: this.statusInternalError,
+            };
+        }
+        return response;
+    };
+
+    getBitrixPortalsList = async (id) => {
+        let response = await this.sendRequest(
+            "post",
+            "/bitrix/portals/getList/",
+            "",
+            { id }
+        );
+        if (response.status === this.statusInternalError) {
+            return {
+                statusText: "Ошибка сервера при получении порталов.",
+                status: this.statusInternalError,
+            };
+        }
+        return response;
     };
 
     sendFile = async (data) => {
-        let response = await this.sendRequest("post", "/files/upload/", "tasks", data);
-        if(response.data === 'Ошибка при загрузке файла.') {
-            return {statusText: 'Ошибка при загрузке файла.', status: this.statusInternalError};
+        let response = await this.sendRequest(
+            "post",
+            "/files/upload/",
+            "tasks",
+            data,
+            true
+        );
+
+        if (
+            response.data === "Ошибка при загрузке файла." ||
+            response.status === this.statusInternalError
+        ) {
+            return {
+                statusText: "Ошибка при загрузке файла.",
+                status: this.statusInternalError,
+            };
         }
         return response;
     };
 
     createTasks = async (data) => {
-        let response = await this.sendRequest("post", "/users", "createTask", data);
+        let response = await this.sendRequest(
+            "post",
+            "/users",
+            "createTask",
+            data
+        );
         return response;
-    }
+    };
 }

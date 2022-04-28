@@ -1,17 +1,25 @@
-export const SET_PROJECT = "SET/SET_PROJECT";
-export const SET_PROJECT_LIST = "SET/SET_PROJECT_LIST";
+export const SET_GROUP = "GROUP/SET_GROUP";
+export const SET_GROUPS_LIST = "GROUP/SET_GROUPS_LIST";
+export const SET_PORTALS_LIST = "PORTALS/SET_PORTALS_LIST";
+export const SET_PORTAL_ID = "PORTALS/SET_PORTAL_ID";
 
 const initialState = {
-    project: 0,
-    projectList: []
+    projectId: 0,
+    portalId: 0,
+    groupsList: [],
+    portalsList: [],
 };
 
 export const bitrixReducer = (state = initialState, action) => {
     switch (action.type) {
-        case SET_PROJECT:
-            return { ...state, project: action.payload };
-        case SET_PROJECT_LIST:
-            return { ...state, projectList: action.payload };
+        case SET_GROUP:
+            return { ...state, projectId: action.payload };
+        case SET_GROUPS_LIST:
+            return { ...state, groupsList: action.payload };
+        case SET_PORTALS_LIST:
+            return { ...state, portalsList: action.payload };
+        case SET_PORTAL_ID: 
+            return { ...state, portalId: action.payload };
         default:
             return state;
     }

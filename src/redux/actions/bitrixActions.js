@@ -1,9 +1,22 @@
-import { SET_PROJECT, SET_PROJECT_LIST } from "../reducers/bitrixReducer";
+import {
+    SET_GROUP,
+    SET_GROUPS_LIST,
+    SET_PORTALS_LIST,
+    SET_PORTAL_ID,
+} from "../reducers/bitrixReducer";
 
-export const setProject = (project) => {
-    return {type: SET_PROJECT, payload: project};
-}
+export const setGroup = (project) => {
+    return { type: SET_GROUP, payload: project };
+};
 
-export const setProjectList = (list) => {
-    return {type: SET_PROJECT_LIST, payload: list};
-}
+export const setPortal = (portal) => {
+    return { type: SET_PORTAL_ID, payload: portal };
+};
+
+export const setGroupList = (list) => {
+    return { type: SET_GROUPS_LIST, payload: list };
+};
+
+export const setPortalsList = (list) => {
+    return { type: SET_PORTALS_LIST, payload: list };
+};

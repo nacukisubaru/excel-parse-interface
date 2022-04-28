@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 export default function SelectList(props) {
-    let selectObj = props.props.selectObj;
+    let selectObj = props.props;
 
     return (
         <Box sx={{ minWidth: 120 }}>
