@@ -70,7 +70,7 @@ export default function UploadFile() {
             for (var item in data) {
                 let innerData = data[item];
                 if (innerData.hasOwnProperty("ITEMS") && innerData.ITEMS.length > 0) {
-                    generateNamesWithSpaces(innerData.ITEMS[0]);
+                    generateNamesWithSpaces(innerData.ITEMS);
                 }
 
                 if (innerData.hasOwnProperty("ITEMS")) {
@@ -86,12 +86,12 @@ export default function UploadFile() {
                     if (innerData.hasOwnProperty("ITEMS")) {
                         countLevel++;
                         if(innerData.ITEMS.length > 0) {
-                            let itemsData = innerData.ITEMS[0];
+                            let itemsData = innerData.ITEMS;
                             for (var item in itemsData) {
                                 if (typeof itemsData[item] === "object") {
                                     itemsData[item].TITLE = generateSpaces(countLevel) + itemsData[item].TITLE;
                                     if (itemsData[item].hasOwnProperty("ITEMS") && itemsData[item].ITEMS.length > 0) {
-                                        generateNamesWithSpaces(itemsData[item].ITEMS[0]);
+                                        generateNamesWithSpaces(itemsData[item].ITEMS);
                                     }
                                     if (result.indexOf(itemsData[item]) > -1) {
                                         parse(itemsData[item]);

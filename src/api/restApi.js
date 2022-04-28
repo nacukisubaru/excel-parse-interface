@@ -77,13 +77,13 @@ export default class RestApi {
         return response;
     };
 
-    getBitrixPortalsList = async (id) => {
+    getBitrixPortalsList = async () => {
         let response = await this.sendRequest(
             "post",
             "/bitrix/portals/getList/",
             "",
-            { id }
         );
+        
         if (response.status === this.statusInternalError) {
             return {
                 statusText: "Ошибка сервера при получении порталов.",

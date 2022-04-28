@@ -1,39 +1,53 @@
-import { useShowMessage, useTogglePreloader } from "./appHooks";
-import { useSelector } from "react-redux";
 import RestApi from "../api/restApi";
+import { useShowMessage, useTogglePreloader } from "./appHooks";
+import { useDispatch, useSelector } from "react-redux";
 
-export const useCreateTasks = () => {
+export const useInitHooks = () => {
+    const dispatch = useDispatch();
     const message = useShowMessage();
     const preloader = useTogglePreloader();
-    const manager = useSelector((state) => state.bitrixManager);
+    const bitrixManager = useSelector((state) => state.bitrixManager);
     const excelManager = useSelector((state) => state.excelManager);
     const rest = new RestApi();
 
+    return {
+        dispatch,
+        bitrixManager,
+        excelManager,
+        preloader,
+        message,
+        rest
+    }
+}
+
+export const useCreateTasks = () => {
+    const hooksManager = useInitHooks();
+
     const create = async () => {
-        preloader.toggle(true);
-        if (excelManager.excelData.length <= 0) {
-            message.show(
+        hooksManager.preloader.toggle(true);
+        if (hooksManager.excelManager.excelData.length <= 0) {
+            hooksManager.message.show(
                 "Файл xlsx не был загружен! Загрузите excel файл перед созданием задач.",
                 "error"
             );
-        } else if(manager.portalId === 0) {
-            message.show(
+        } else if(hooksManager.bitrixManager.portalId === 0) {
+            hooksManager.message.show(
                 "Портал не выбран! Выберите портал перед созданием задач.",
                 "error"
             );
-        } else if(manager.groupId === 0) {
-            message.show("Группа не выбрана! Выберете портал и группу перед созданием задач.", "error");
+        } else if(hooksManager.bitrixManager.groupId === 0) {
+            hooksManager.message.show("Группа не выбрана! Выберете портал и группу перед созданием задач.", "error");
         } else {
-            await rest.createTasks(manager.portalId, manager.groupId, excelManager.excelData).then(() => {
-                message.show("Задачи успешно созданы!", "success");
+            await hooksManager.rest.createTasks(hooksManager.bitrixManager.portalId, hooksManager.bitrixManager.groupId, hooksManager.excelManager.excelData).then(() => {
+                hooksManager.message.show("Задачи успешно созданы!", "success");
             });
         }
 
-        preloader.toggle(false);
+        hooksManager.preloader.toggle(false);
     }
 
     return {
         create,
-        manager
+        manager: hooksManager.bitrixManager
     }
 }

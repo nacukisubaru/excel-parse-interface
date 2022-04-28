@@ -6,6 +6,8 @@ import { useShowMessage, useTogglePreloader } from "../../../hooks/appHooks";
 import { setPortalsList, setGroup, setPortal, setGroupList } from "../../../redux/actions/bitrixActions";
 import { useCallback, useEffect } from "react";
 import { useCreateTasks } from "../../../hooks/tasksHooks";
+import { setMessage } from "../../../redux/actions/appActions";
+import { showSnack } from "../../../redux/actions/appActions";
 
 export default function CreateTask() {
    
@@ -25,9 +27,11 @@ export default function CreateTask() {
                 dispatch(setPortalsList(portals.data));
                 return false;
             }
-            message.show(portals.statusText, "error");
+
+            dispatch(setMessage({name: portals.statusText, status:"error"}));
+            dispatch(showSnack(true));
         });
-    }, [dispatch, message]);
+    }, [dispatch]);
 
     useEffect(() => {
         projectsList();
@@ -42,11 +46,13 @@ export default function CreateTask() {
     const handleChangePortals = (event) => {
         const rest = new RestApi();
         preloader.toggle(true);
+        console.log(event.target.value);
         dispatch(setPortal(event.target.value));
 
         rest.getBitrixGroupsList(event.target.value).then((response) => {
+            console.log(response);
             if (response.status === 201) {
-                dispatch(setGroupList(response.data.result));
+                dispatch(setGroupList(response.data));
             } else {
                 message.show(response.statusText, "error");
             }
@@ -56,11 +62,11 @@ export default function CreateTask() {
     };
 
     const portalsList = bitrixTasks.manager.portalsList.map((portal) => {
-        return { id: portal.idPortal, name: portal.url };
+        return { id: portal.id, name: portal.url };
     });
 
     const groupsList = bitrixTasks.manager.groupsList.map((group) => {
-        return { id: group.ID, name: group.NAME };
+        return { id: group.id, name: group.groupName };
     });
 
     let isActiveSelectGroup = bitrixTasks.manager.groupsList.length > 0 ? true : false;
