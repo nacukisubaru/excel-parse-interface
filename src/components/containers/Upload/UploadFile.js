@@ -5,6 +5,7 @@ import { setExcelData, setParsedData } from "../../../redux/actions/excelActions
 import { useSelector, useDispatch } from "react-redux";
 import { useShowMessage } from "../../../hooks/appHooks";
 import { useTogglePreloader } from "../../../hooks/appHooks";
+import { transliterate as slugify} from 'transliteration';
 
 export default function UploadFile() {
     const dispatch = useDispatch();
@@ -25,10 +26,12 @@ export default function UploadFile() {
     const handlerUploadFile = async (event) => {
         let file = event.target.files[0];
         let extension = file.name.split(".").pop();
+        let fileName = slugify(file.name.split(".")[0]).replaceAll(' ', '-');
+        const newFile = new File([file], fileName + '.xlsx');
         preloader.toggle(true);
         if (extension === "xlsx") {
             let formData = new FormData();
-            formData.append("files", file);
+            formData.append("files", newFile);
             const originalExcelData = await sendFile(formData);
             const excelDataForParsing = JSON.parse(JSON.stringify(originalExcelData))
 
