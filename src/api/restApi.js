@@ -22,7 +22,6 @@ export default class RestApi {
         isSendFile = false,
     ) => {
         let result = {};
-        let that = this;
 
         const axiosObj = {
             method: method,
@@ -110,7 +109,7 @@ export default class RestApi {
             {portalId, groupId, data}
         );
 
-        if (response.status != this.statusPostOk) {
+        if (response.status !== this.statusPostOk) {
             return {
                 statusText: "Ошибка на сервере при создании задач.",
                 status: this.statusInternalError,
