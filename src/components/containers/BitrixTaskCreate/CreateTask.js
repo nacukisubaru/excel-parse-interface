@@ -27,7 +27,7 @@ export default function CreateTask() {
             }
             message.show(portals.statusText, "error");
         });
-    }, [dispatch]);
+    }, [dispatch, message]);
 
     useEffect(() => {
         projectsList();
