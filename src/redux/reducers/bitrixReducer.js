@@ -4,7 +4,7 @@ export const SET_PORTALS_LIST = "PORTALS/SET_PORTALS_LIST";
 export const SET_PORTAL_ID = "PORTALS/SET_PORTAL_ID";
 
 const initialState = {
-    projectId: 0,
+    groupId: 0,
     portalId: 0,
     groupsList: [],
     portalsList: [],
@@ -13,7 +13,7 @@ const initialState = {
 export const bitrixReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_GROUP:
-            return { ...state, projectId: action.payload };
+            return { ...state, groupId: action.payload };
         case SET_GROUPS_LIST:
             return { ...state, groupsList: action.payload };
         case SET_PORTALS_LIST:

@@ -1,32 +1,21 @@
 import React from "react";
 import RestApi from "../../../api/restApi";
 import ToolsTasks from "../../ToolsCreateTasks/ToolsTasks";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useShowMessage, useTogglePreloader } from "../../../hooks/appHooks";
 import { setPortalsList, setGroup, setPortal, setGroupList } from "../../../redux/actions/bitrixActions";
 import { useCallback, useEffect } from "react";
+import { useCreateTasks } from "../../../hooks/tasksHooks";
 
 export default function CreateTask() {
-    const rest = new RestApi();
+   
     const message = useShowMessage();
     const preloader = useTogglePreloader();
+    const bitrixTasks = useCreateTasks();
     const dispatch = useDispatch();
-    const bitrixManager = useSelector((state) => state.bitrixManager);
-    const excelManager = useSelector((state) => state.excelManager);
 
     const handleClick = async () => {
-        preloader.toggle(true);
-        if (excelManager.excelData.length > 0) {
-            await rest.createTasks(excelManager.excelData).then(() => {
-                message.show("Задачи успешно созданы!", "success");
-            });
-        } else {
-            message.show(
-                "Файл xlsx не был загружен! Загрузите excel файл перед созданием задач",
-                "error"
-            );
-        }
-        preloader.toggle(false);
+        bitrixTasks.create();
     };
 
     const projectsList = useCallback(() => {
@@ -45,32 +34,36 @@ export default function CreateTask() {
     }, [projectsList]);
 
     const handleChangeGroups = (event) => {
+        preloader.toggle(true);
         dispatch(setGroup(event.target.value));
+        preloader.toggle(false);
     };
 
     const handleChangePortals = (event) => {
         const rest = new RestApi();
-
+        preloader.toggle(true);
         dispatch(setPortal(event.target.value));
 
         rest.getBitrixGroupsList(event.target.value).then((response) => {
             if (response.status === 201) {
                 dispatch(setGroupList(response.data.result));
-                return false;
+            } else {
+                message.show(response.statusText, "error");
             }
-            message.show(response.statusText, "error");
+
+            preloader.toggle(false);
         });
     };
 
-    const portalsList = bitrixManager.portalsList.map((portal) => {
+    const portalsList = bitrixTasks.manager.portalsList.map((portal) => {
         return { id: portal.idPortal, name: portal.url };
     });
 
-    const groupsList = bitrixManager.groupsList.map((group) => {
+    const groupsList = bitrixTasks.manager.groupsList.map((group) => {
         return { id: group.ID, name: group.NAME };
     });
 
-    let isActiveSelectGroup = bitrixManager.groupsList.length > 0 ? true : false;
+    let isActiveSelectGroup = bitrixTasks.manager.groupsList.length > 0 ? true : false;
 
     return (
         <div>
@@ -81,14 +74,14 @@ export default function CreateTask() {
                 },
                 selectPortal: {
                     items: portalsList,
-                    selectedValue: bitrixManager.portalId,
+                    selectedValue: bitrixTasks.manager.portalId,
                     labelValue: "Порталы Битрикс24",
                     isActive: true,
                     handleChange: handleChangePortals,
                 },
                 selectGroup: {
                     items: groupsList,
-                    selectedValue: bitrixManager.projectId,
+                    selectedValue: bitrixTasks.manager.groupId,
                     labelValue: "Проекты Битрикс24",
                     isActive: isActiveSelectGroup,
                     handleChange: handleChangeGroups,

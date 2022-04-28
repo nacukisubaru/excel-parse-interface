@@ -114,12 +114,12 @@ export default class RestApi {
         return response;
     };
 
-    createTasks = async (data) => {
+    createTasks = async (portalId, groupId, data) => {
         let response = await this.sendRequest(
             "post",
             "/users",
             "createTask",
-            data
+            {portalId, groupId, data}
         );
         return response;
     };

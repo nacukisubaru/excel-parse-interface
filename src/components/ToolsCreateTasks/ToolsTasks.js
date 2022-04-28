@@ -17,11 +17,13 @@ export default function ToolsTasks(props) {
                         props={{ selectList: tools.selectPortal }}
                     ></SelectList>
                 </Grid>
-                <Grid item={true} style={{ width: 300, marginRight: 5 }}>
-                    <SelectList
-                        props={{ selectList: tools.selectGroup }}
-                    ></SelectList>
-                </Grid>
+                {tools.selectGroup.isActive && (
+                    <Grid item={true} style={{ width: 300, marginRight: 5 }}>
+                        <SelectList
+                            props={{ selectList: tools.selectGroup }}
+                        ></SelectList>
+                    </Grid>
+                )}
                 <Grid item={true} style={{ marginTop: "9px" }}>
                     <CustomButton props={{ customButton: tools.createTaskBtn }}></CustomButton>
                 </Grid>
