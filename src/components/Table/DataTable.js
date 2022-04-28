@@ -1,8 +1,6 @@
 import { DataGrid } from "@mui/x-data-grid";
-import Grid from "@mui/material/Grid";
 import UploadButton from "../Upload/UploadButton";
-import CreateTask from "../containers/Task/CreateTask";
-import BitrixProjectsList from "../containers/BitrixProjects/BitrixProjectsList";
+import CreateTask from "../containers/BitrixTaskCreate/CreateTask";
 
 const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -20,15 +18,8 @@ export default function DataTable(props) {
 
     return (
         <div style={{ height: 900, width: "95%", marginBottom: "10px"}}>
-             <Grid style={{ marginTop: 1, marginBottom:'6px' }} container spacing={1}>
-                <Grid item={true} style={{width:500, marginRight:5}}>
-                    <BitrixProjectsList></BitrixProjectsList>
-                </Grid>
-                <Grid item={true} style={{marginTop: '9px'}}>
-                    <CreateTask></CreateTask>
-                </Grid>
-            </Grid>
-            
+            <CreateTask></CreateTask>
+
             <UploadButton props={{
                 name: "Загрузить файл",
                 handlerUploadFile: props.props.excelObj.handlerUploadFile,
