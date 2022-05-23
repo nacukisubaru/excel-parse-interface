@@ -7,8 +7,8 @@ const columns = [
     { field: "TITLE", headerName: "Название операции", width: 1100 },
     { field: "STATUS", headerName: "Статус операции", width: 150 },
     { field: "TIME_ESTIMATE", headerName: "Длительность - по завершении", width: 250 },
-    { field: "CREATED_DATE", headerName: "Начало", width: 150 },
-    { field: "DEADLINE", headerName: "Окончание", width: 150 },
+    { field: "START_DATE_PLAN", headerName: "Начало", width: 150 },
+    { field: "END_DATE_PLAN", headerName: "Окончание", width: 150 },
 ];
 
 
